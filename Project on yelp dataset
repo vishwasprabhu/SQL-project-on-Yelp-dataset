@@ -3,16 +3,7 @@ I would be using number of businesses in each of the open/close group along with
 The sentiment analysis actually gives the customer behavior and can be used to preddict if the business can survive or not (Open/close) along with average star rating. It can be seen from output that the average sentiment and average star rating is better for businesses that are still open when compared to the ones that are closed.
 A high average sentiment means the review text had more positive words or less negative words in the overall count.
 
-Output of your finished dataset:
-+------------------+----------------+---------------+---------------+---------------+-------------------+
-| Total_businesses | Average_review | total_reviews |      Avg_star | Open_Or_Close | average_sentiment |
-+------------------+----------------+---------------+---------------+---------------+-------------------+
-|               71 |  129.816901408 |          9217 | 3.54225352113 | Close         |    0.211267605634 |
-|              565 |  311.187610619 |        175821 |  3.7610619469 | Open          |    0.279646017699 |
-+------------------+----------------+---------------+---------------+---------------+-------------------+
-         
 SQL Code:
-
 SELECT Count(b.id) AS Total_businesses, 
        Avg(b.review_count) AS Average_review, 
        SUM(b.review_count) AS total_reviews, 
@@ -43,3 +34,12 @@ FROM   business AS b
        inner join review AS r 
                ON b.id = r.business_id 
 GROUP  BY b.is_open 
+
+Output of the Code:
++------------------+----------------+---------------+---------------+---------------+-------------------+
+| Total_businesses | Average_review | total_reviews |      Avg_star | Open_Or_Close | average_sentiment |
++------------------+----------------+---------------+---------------+---------------+-------------------+
+|               71 |  129.816901408 |          9217 | 3.54225352113 | Close         |    0.211267605634 |
+|              565 |  311.187610619 |        175821 |  3.7610619469 | Open          |    0.279646017699 |
++------------------+----------------+---------------+---------------+---------------+-------------------+
+         
