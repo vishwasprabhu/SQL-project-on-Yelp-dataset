@@ -1,0 +1,45 @@
+I would be doing a sentiment text analysis to find relationship between the sentiments from the text to the average star rating and to predicting the business open/close scenario.         
+I would be using number of businesses in each of the open/close group along with average number of reviews, total number of reviews and average star rating. I would try to predict the average sentiment from the text of the review using limited number of positive and negative words and correlate it to predict whether the business will remain open/close. 
+The sentiment analysis actually gives the customer behavior and can be used to preddict if the business can survive or not (Open/close) along with average star rating. It can be seen from output that the average sentiment and average star rating is better for businesses that are still open when compared to the ones that are closed.
+A high average sentiment means the review text had more positive words or less negative words in the overall count.
+
+Output of your finished dataset:
++------------------+----------------+---------------+---------------+---------------+-------------------+
+| Total_businesses | Average_review | total_reviews |      Avg_star | Open_Or_Close | average_sentiment |
++------------------+----------------+---------------+---------------+---------------+-------------------+
+|               71 |  129.816901408 |          9217 | 3.54225352113 | Close         |    0.211267605634 |
+|              565 |  311.187610619 |        175821 |  3.7610619469 | Open          |    0.279646017699 |
++------------------+----------------+---------------+---------------+---------------+-------------------+
+         
+SQL Code:
+
+SELECT Count(b.id) AS Total_businesses, 
+       Avg(b.review_count) AS Average_review, 
+       SUM(b.review_count) AS total_reviews, 
+       Avg(b.stars)        AS Avg_star, 
+       CASE  /*For grouping the open and close using is_open*/
+         WHEN b.is_open = 1 THEN 'Open' 
+         WHEN b.is_open = 0 THEN 'Close' 
+       END                 AS Open_Or_Close, 
+       Avg(CASE    -- Case for sentiment analysis using keywords. It can be expanded further by reading through comments.
+             WHEN r.text LIKE '%hate%' THEN -1    /* "-1" is for negative words in the review text*/
+             WHEN r.text LIKE '%overprice%' THEN -1 
+             WHEN r.text LIKE '%worst%' THEN -1 
+             WHEN r.text LIKE '%bad%' THEN -1 
+             WHEN r.text LIKE '%mistake%' THEN -1 
+             WHEN r.text LIKE '%frustrate%' THEN -1 
+             WHEN r.text LIKE '%broken%' THEN -1 
+             WHEN r.text LIKE '%stink%' THEN -1 
+             WHEN r.text LIKE '%kind%' THEN 1  /*"1" i for positive words in the review*/
+             WHEN r.text LIKE '%great%' THEN 1 
+             WHEN r.text LIKE '%love%' THEN 1 
+             WHEN r.text LIKE '%fabulous%' THEN 1 
+             WHEN r.text LIKE '%helpful%' THEN 1 
+             WHEN r.text LIKE 'kind%' THEN 1 
+             WHEN r.text LIKE '%welcome%' THEN 1 
+             ELSE 0   /* "0" is if none of the words appear in the review text*/
+           END)            AS average_sentiment  
+FROM   business AS b 
+       inner join review AS r 
+               ON b.id = r.business_id 
+GROUP  BY b.is_open 
